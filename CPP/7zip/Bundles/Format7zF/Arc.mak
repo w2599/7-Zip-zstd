@@ -307,6 +307,7 @@ C_OBJS = \
   $O\Ppmd8Dec.obj \
   $O\Ppmd8Enc.obj \
   $O\Sort.obj \
+  $O\SwapBytes.obj \
   $O\Threads.obj \
   $O\Xz.obj \
   $O\XzDec.obj \

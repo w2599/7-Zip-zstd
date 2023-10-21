@@ -46,7 +46,7 @@ You can install it in two ways:
 
 The output should look like this:
 ```
-7-Zip 22.01 ZS v1.5.5 R3 (x64) : Copyright (c) 1999-2022 Igor Pavlov, 2016-2023 Tino Reichardt : 2023-06-18
+7-Zip 23.01 ZS v1.5.5 R3 (x64) : Copyright (c) 1999-2022 Igor Pavlov, 2016-2023 Tino Reichardt : 2023-06-18
 
 Libs:
  0  c:\Program Files\7-Zip-Zstandard\7z.dll
@@ -290,7 +290,7 @@ You find this project useful, maybe you consider a donation ;-)
 
 ## Version Information
 
-- 7-Zip ZS Version 22.01
+- 7-Zip ZS Version 23.01
   - [Brotli] Version 1.0.9
   - [Fast LZMA2] Version 1.0.1
   - [Lizard] Version 1.0
@@ -299,7 +299,7 @@ You find this project useful, maybe you consider a donation ;-)
   - [Zstandard] Version 1.5.5
   - [BLAKE3] Version 0.3.7
 
-/TR 2023-06-18
+/TR 2023-10-21
 
 ## Notes
 

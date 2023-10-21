@@ -4,6 +4,11 @@ LIBS = $(LIBS) oleaut32.lib ole32.lib
 CFLAGS = $(CFLAGS) -DUNICODE -D_UNICODE
 !ENDIF
 
+!IF "$(CC)" != "clang-cl"
+# for link time code generation:
+# CFLAGS = $(CFLAGS) -GL
+!ENDIF
+
 !IFNDEF O
 !IFDEF PLATFORM
 O=$(PLATFORM)
@@ -93,8 +98,21 @@ CFLAGS = $(CFLAGS) -MT
 
 CFLAGS = $(CFLAGS_COMMON) $(CFLAGS)
 
+
 !IFNDEF OLD_COMPILER
-CFLAGS = $(CFLAGS) -GS- -Zc:forScope -Zc:wchar_t
+
+CFLAGS = $(CFLAGS) -GS- -Zc:wchar_t
+!IFDEF VCTOOLSVERSION
+!IF "$(VCTOOLSVERSION)" >= "14.00"
+!IF "$(CC)" != "clang-cl"
+CFLAGS = $(CFLAGS) -Zc:throwingNew
+!ENDIF
+!ENDIF
+!ELSE
+# -Zc:forScope is default in VS2010. so we need it only for older versions
+CFLAGS = $(CFLAGS) -Zc:forScope
+!ENDIF
+
 !IFNDEF UNDER_CE
 !IF "$(CC)" != "clang-cl"
 CFLAGS = $(CFLAGS) -MP4
@@ -103,9 +121,9 @@ CFLAGS = $(CFLAGS) -MP4
 # CFLAGS = $(CFLAGS) -arch:IA32
 !ENDIF
 !ENDIF
-!ELSE
-CFLAGS = $(CFLAGS)
+
 !ENDIF
+
 
 !IFDEF MY_CONSOLE
 CFLAGS = $(CFLAGS) -D_CONSOLE
@@ -120,7 +138,7 @@ CFLAGS = $(CFLAGS) -D_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE
 CFLAGS_O1 = $(CFLAGS) -O1
 CFLAGS_O2 = $(CFLAGS) -O2 /Ob3
 
-LFLAGS = $(LFLAGS) -nologo -OPT:REF -OPT:ICF
+LFLAGS = $(LFLAGS) -nologo -OPT:REF -OPT:ICF -INCREMENTAL:NO
 
 !IFNDEF UNDER_CE
 LFLAGS = $(LFLAGS) /LTCG /LARGEADDRESSAWARE
@@ -141,6 +159,12 @@ LFLAGS = $(LFLAGS) /SUBSYSTEM:windows,$(MY_SUB_SYS_VER)
 !ENDIF
 
 !ENDIF
+
+!IF "$(PLATFORM)" == "arm64"
+# we can get better compression ratio with ARM64 filter if we change alignment to 4096
+# LFLAGS = $(LFLAGS) /FILEALIGN:4096
+!ENDIF
+
 
 
 PROGPATH = $O\$(PROG)
@@ -175,6 +199,11 @@ $O:
 $O/asm:
 	if not exist "$O/asm" mkdir "$O/asm"
 
+!IF "$(CC)" != "clang-cl"
+# for link time code generation:
+# LFLAGS = $(LFLAGS) -LTCG
+!ENDIF
+
 $(PROGPATH): $O $O/asm $(OBJS) $(DEF_FILE)
 	link $(LFLAGS) -out:$(PROGPATH) $(OBJS) $(LIBS)
 
@@ -184,3 +213,12 @@ $O\resource.res: $(*B).rc
 !ENDIF
 $O\StdAfx.obj: $(*B).cpp
 	$(COMPL_PCH)
+
+predef: empty.c
+	$(CCOMPL)   /EP /Zc:preprocessor /PD
+predef2: A.cpp
+	$(COMPL)   -EP -Zc:preprocessor -PD
+predef3: A.cpp
+	$(COMPL)   -E -dM 
+predef4: A.cpp
+	$(COMPL_O2)   -E
