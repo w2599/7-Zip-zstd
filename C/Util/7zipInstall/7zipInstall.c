@@ -64,7 +64,7 @@ typedef void (*Z7_voidFunction)(void);
 #define Z7_7ZIP_CUR_VER ((MY_VER_MAJOR << 16) | MY_VER_MINOR)
 #define Z7_7ZIP_DLL_VER_COMPAT ((16 << 16) | 3)
 
-static LPCSTR const k_7zip = "7-Zip";
+static LPCSTR const k_7zip = "7-Zip-Zstandard";
 
 static LPCWSTR const k_Reg_Software_7zip = L"Software\\7-Zip-Zstandard";
 
@@ -624,9 +624,9 @@ static LPCWSTR FindSubString(LPCWSTR s1, const char *s2)
 static void Set7zipPostfix(WCHAR *s)
 {
   NormalizePrefix(s);
-  if (FindSubString(s, "7-Zip"))
+  if (FindSubString(s, "7-Zip-Zstandard"))
     return;
-  CatAscii(s, "7-Zip\\");
+  CatAscii(s, "7-Zip-Zstandard\\");
 }
     
 
@@ -854,7 +854,7 @@ static void SetShellProgramsGroup(HWND hwndOwner)
 }
 
 static LPCWSTR const k_Shell_Approved = L"Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved";
-static LPCWSTR const k_7zip_ShellExtension = L"7-Zip Shell Extension";
+static LPCWSTR const k_7zip_ShellExtension = L"7-Zip-Zstandard Shell Extension";
 
 static void WriteCLSID(void)
 {
